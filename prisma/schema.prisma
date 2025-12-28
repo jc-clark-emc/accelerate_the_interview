@@ -1,0 +1,463 @@
+// prisma/schema.prisma
+// Interview Accelerator - Complete Data Model
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTH MODELS
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Magic Link Auth
+  magicLinkToken   String?   @unique
+  magicLinkExpires DateTime?
+
+  // Subscription
+  subscription  Subscription?
+  
+  // Day Progress
+  dayProgress   DayProgress[]
+  currentDay    Int       @default(1)
+  
+  // Day 1: Who You Are
+  careerProfile CareerProfile?
+  
+  // Day 2: What You Want
+  careerPreferences CareerPreferences?
+  
+  // Day 3+: Jobs
+  jobLeads      JobLead[]
+  
+  // Resume
+  resumeProfile ResumeProfile?
+  
+  // Networking
+  networkingSetup NetworkingSetup?
+  networkingContacts NetworkingContact[]
+  
+  // STAR Stories
+  starStories   StarStory[]
+  
+  // Practice Sessions
+  practiceSessions PracticeSession[]
+  
+  // Weekly Wins (Premium)
+  weeklyWins    WeeklyWin[]
+}
+
+model Subscription {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  tier          SubscriptionTier @default(STARTER)
+  status        SubscriptionStatus @default(ACTIVE)
+  
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  stripePriceId        String?
+  
+  startDate     DateTime  @default(now())
+  endDate       DateTime  // 14 days, 30 days, or 365 days from start
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum SubscriptionTier {
+  STARTER   // $149 - 14 days, no AI
+  PRO       // $399 - 30 days, with AI
+  PREMIUM   // $599 - 365 days, with AI + extras
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  READ_ONLY  // After completion, before re-upgrade
+}
+
+// ============================================
+// PROGRESS TRACKING
+// ============================================
+
+model DayProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dayNumber     Int       // 1-14
+  status        DayStatus @default(LOCKED)
+  completedAt   DateTime?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([userId, dayNumber])
+}
+
+enum DayStatus {
+  LOCKED
+  UNLOCKED
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ============================================
+// DAY 1: WHO YOU ARE (Career Profile)
+// ============================================
+
+model CareerProfile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Skills & Abilities
+  technicalSkills     String[]  @default([])
+  softSkills          String[]  @default([])
+  toolsAndSoftware    String[]  @default([])
+  languages           String[]  @default([])
+  
+  // Experience
+  jobTitlesHeld       String[]  @default([])
+  industriesWorkedIn  String[]  @default([])
+  yearsOfExperience   Int?
+  typesOfWork         String[]  @default([])  // managed people, built things, etc.
+  
+  // Education & Credentials
+  degrees             Json[]    @default([])  // [{degree, field, school, year}]
+  certifications      String[]  @default([])
+  relevantTraining    String[]  @default([])
+  
+  // Accomplishments
+  accomplishments     Json[]    @default([])  // [{description, metrics, impact}]
+  projectsProudOf     String[]  @default([])
+  awardsRecognition   String[]  @default([])
+  
+  isComplete          Boolean   @default(false)
+  completedAt         DateTime?
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+// ============================================
+// DAY 2: WHAT YOU WANT (Career Preferences)
+// ============================================
+
+model CareerPreferences {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Target Roles
+  targetJobTitles     String[]  @default([])
+  targetIndustries    String[]  @default([])
+  companySizePreference String?  // startup, mid-size, enterprise, no preference
+  
+  // Compensation
+  salaryMin           Int?
+  salaryIdeal         Int?
+  benefitsPriorities  String[]  @default([])
+  
+  // Work Environment
+  workLocationPreference String?  // remote, hybrid, onsite, flexible
+  geographicPreferences  String[] @default([])
+  willingToRelocate      Boolean  @default(false)
+  maxCommute             Int?     // minutes
+  workHoursPreference    String?  // 9-5, flexible, shift work ok
+  travelPreference       String?  // none, some, lots
+  
+  // Responsibilities
+  responsibilitiesWant   String[]  @default([])
+  responsibilitiesAvoid  String[]  @default([])
+  
+  // Culture
+  workLifeBalanceNotes   String?
+  companyValuesImportant String[]  @default([])
+  managementStylePrefer  String?
+  teamDynamicsPrefer     String?
+  
+  // Non-Negotiables (Dealbreakers)
+  nonNegotiables         String[]  @default([])
+  
+  // Weights (how much each factor matters - must total 100)
+  weights               Json      @default("{}")  // {salary: 20, location: 15, ...}
+  
+  isComplete            Boolean   @default(false)
+  completedAt           DateTime?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+// ============================================
+// DAY 3, 8, 9: JOB TRACKING
+// ============================================
+
+model JobLead {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  jobTitle      String
+  company       String
+  url           String
+  salaryMin     Int?
+  salaryMax     Int?
+  location      String?
+  workType      String?   // remote, hybrid, onsite
+  
+  // Job Description (pasted by user)
+  jobDescription String?  @db.Text
+  
+  // Match Score
+  matchScore    Int?      // 0-100 percentage
+  matchBreakdown Json?    // {salary: true, location: false, ...}
+  
+  // Application Status
+  status        JobStatus @default(SAVED)
+  appliedDate   DateTime?
+  notes         String?   @db.Text
+  
+  // Networking contacts for this job
+  contacts      NetworkingContact[]
+  
+  // Tracking
+  isOpen        Boolean   @default(true)
+  followUpDate  DateTime?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([userId])
+}
+
+enum JobStatus {
+  SAVED           // Day 3: Found and saved
+  APPLIED         // Day 8-9: Application submitted
+  SCREENING       // Recruiter call scheduled/completed
+  INTERVIEW       // In interview process
+  FINAL_ROUND     // Final interviews
+  OFFER           // Received offer
+  REJECTED        // They said no
+  WITHDRAWN       // User decided not to continue
+}
+
+// ============================================
+// DAY 4: RESUME
+// ============================================
+
+model ResumeProfile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Contact Info
+  fullName      String?
+  email         String?
+  phone         String?
+  location      String?
+  linkedinUrl   String?
+  portfolioUrl  String?
+  
+  // Headline
+  headline      String?
+  
+  // Summary
+  summaryStatement String? @db.Text
+  
+  // Experience Bullets (most recent role)
+  currentCompany    String?
+  currentTitle      String?
+  bulletOne         String? @db.Text
+  bulletOneOriginal String? @db.Text  // Before AI rewrite
+  bulletTwo         String? @db.Text
+  bulletTwoOriginal String? @db.Text
+  bulletThree       String? @db.Text
+  bulletThreeOriginal String? @db.Text
+  
+  isComplete        Boolean   @default(false)
+  completedAt       DateTime?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// ============================================
+// DAY 6-7, 10-11: NETWORKING
+// ============================================
+
+model NetworkingSetup {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Calendar Setup (Day 6)
+  calendarAuditDone   Boolean   @default(false)
+  availableSlots      String?   @db.Text  // Free text of availability
+  schedulingLinkUrl   String?   // Calendly or similar
+  
+  // Elevator Pitch (Day 6)
+  elevatorPitch       String?   @db.Text
+  
+  // Message Templates (Day 7)
+  hiringTeamTemplate  String?   @db.Text
+  coworkerTemplate    String?   @db.Text
+  
+  // Coffee Chat Questions (Day 7)
+  coffeeChatQuestions String[]  @default([])
+  
+  isComplete          Boolean   @default(false)
+  completedAt         DateTime?
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model NetworkingContact {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Link to job (optional - for Day 10-11 contacts)
+  jobLeadId     String?
+  jobLead       JobLead?  @relation(fields: [jobLeadId], references: [id], onDelete: SetNull)
+  
+  // Contact Info
+  name          String
+  role          String?
+  company       String
+  linkedinUrl   String?
+  
+  // Type
+  contactType   ContactType
+  
+  // Outreach Status
+  messageSent   Boolean   @default(false)
+  messageSentDate DateTime?
+  status        NetworkingStatus @default(NOT_CONTACTED)
+  
+  // Notes
+  notes         String?   @db.Text
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([jobLeadId])
+}
+
+enum ContactType {
+  HIRING_TEAM   // Recruiter, hiring manager, HR
+  COWORKER      // Potential teammates
+  GENERAL       // Day 7 contacts (not job-specific)
+}
+
+enum NetworkingStatus {
+  NOT_CONTACTED
+  SENT            // Message sent, waiting
+  RESPONDED       // They replied
+  SCHEDULED       // Coffee chat booked
+  COMPLETED       // Coffee chat done
+  DECLINED        // They said no
+  NO_REPLY        // No response after follow-up
+  FOLLOW_UP_NEEDED
+}
+
+// ============================================
+// DAY 12-13: STAR STORIES & PRACTICE
+// ============================================
+
+model StarStory {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Question
+  questionNumber Int      // 1-10
+  question       String
+  
+  // STAR Components
+  situation     String?   @db.Text
+  task          String?   @db.Text
+  action        String?   @db.Text
+  result        String?   @db.Text
+  
+  // AI Improvements (Pro/Premium only)
+  aiSuggestions String?   @db.Text
+  
+  isComplete    Boolean   @default(false)
+  completedAt   DateTime?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Practice session for this story
+  practiceSessions PracticeSession[]
+  
+  @@unique([userId, questionNumber])
+  @@index([userId])
+}
+
+model PracticeSession {
+  id            String    @id @default(cuid())
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  starStoryId   String
+  starStory     StarStory @relation(fields: [starStoryId], references: [id], onDelete: Cascade)
+  
+  // Self Evaluation
+  pacing        String?   // too_slow, just_right, too_fast
+  eyeContact    String?   // needs_work, okay, strong
+  fillerWords   String?   // too_many, some, clean
+  confidence    String?   // nervous, okay, confident
+  answerLength  String?   // too_short, just_right, too_long
+  
+  // Notes
+  selfNotes     String?   @db.Text
+  aiTips        String?   @db.Text  // AI-generated tips based on evaluation
+  
+  practicedAt   DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([starStoryId])
+}
+
+// ============================================
+// PREMIUM FEATURES (599 tier only)
+// ============================================
+
+model WeeklyWin {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  weekOf        DateTime  // Start of the week
+  wins          String[]  @default([])
+  challenges    String[]  @default([])
+  learnings     String[]  @default([])
+  nextWeekGoals String[]  @default([])
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([userId, weekOf])
+  @@index([userId])
+}
