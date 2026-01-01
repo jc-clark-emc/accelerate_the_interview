@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PRICING_TIERS } from "@/lib/constants";
 import { Check, Rocket, ChevronDown, Star, TrendingUp, Users, Clock, Target, MessageSquare, FileText, Sparkles } from "lucide-react";
+import PricingSection from "@/components/PricingSection";
 
 export default function Home() {
   const painPoints = [
@@ -307,69 +308,7 @@ export default function Home() {
             <p className="text-white/60">One-time purchase. No subscriptions. Your data stays yours.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Starter */}
-            <div className="card">
-              <h3 className="text-xl font-bold text-white mb-2">{PRICING_TIERS.STARTER.name}</h3>
-              <p className="text-4xl font-bold bg-gradient-to-r from-[#00ffff] to-[#ff1493] bg-clip-text text-transparent mb-1">
-                ${PRICING_TIERS.STARTER.price}
-              </p>
-              <p className="text-white/50 text-sm mb-6">{PRICING_TIERS.STARTER.days} days to complete</p>
-              <ul className="space-y-3 mb-8">
-                {PRICING_TIERS.STARTER.features.map((f, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-white/70">
-                    <Check className="w-4 h-4 text-[#10b981] flex-shrink-0 mt-0.5" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <a href="https://stan.store/_thecareerengineer" target="_blank" rel="noopener noreferrer" className="btn-secondary w-full block text-center">
-                Get Starter
-              </a>
-            </div>
-
-            {/* Pro */}
-            <div className="card border border-[#00ffff]/50 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 badge badge-cyan text-xs">MOST POPULAR</div>
-              <h3 className="text-xl font-bold text-white mb-2">{PRICING_TIERS.PRO.name}</h3>
-              <p className="text-4xl font-bold bg-gradient-to-r from-[#00ffff] to-[#ff1493] bg-clip-text text-transparent mb-1">
-                ${PRICING_TIERS.PRO.price}
-              </p>
-              <p className="text-white/50 text-sm mb-6">{PRICING_TIERS.PRO.days} days to complete</p>
-              <ul className="space-y-3 mb-8">
-                {PRICING_TIERS.PRO.features.map((f, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-white/70">
-                    <Check className="w-4 h-4 text-[#10b981] flex-shrink-0 mt-0.5" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <a href="https://stan.store/_thecareerengineer" target="_blank" rel="noopener noreferrer" className="btn-primary w-full block text-center">
-                Get Pro
-              </a>
-            </div>
-
-            {/* Premium */}
-            <div className="card relative">
-              <div className="absolute -top-3 right-4 badge badge-yellow text-xs">BEST VALUE</div>
-              <h3 className="text-xl font-bold text-white mb-2">{PRICING_TIERS.PREMIUM.name}</h3>
-              <p className="text-4xl font-bold bg-gradient-to-r from-[#00ffff] to-[#ff1493] bg-clip-text text-transparent mb-1">
-                ${PRICING_TIERS.PREMIUM.price}
-              </p>
-              <p className="text-white/50 text-sm mb-6">{PRICING_TIERS.PREMIUM.days} days of access</p>
-              <ul className="space-y-3 mb-8">
-                {PRICING_TIERS.PREMIUM.features.map((f, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-white/70">
-                    <Check className="w-4 h-4 text-[#10b981] flex-shrink-0 mt-0.5" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <a href="https://stan.store/_thecareerengineer" target="_blank" rel="noopener noreferrer" className="btn-secondary w-full block text-center">
-                Get Premium
-              </a>
-            </div>
-          </div>
+          <PricingSection />
         </div>
       </section>
 

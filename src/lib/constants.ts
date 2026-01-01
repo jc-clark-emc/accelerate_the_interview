@@ -240,7 +240,7 @@ export const PRICING_TIERS = {
   },
   PRO: {
     name: "Pro",
-    price: 399,
+    price: 299,
     days: 32,
     hasAI: true,
     features: [
@@ -253,7 +253,7 @@ export const PRICING_TIERS = {
   },
   PREMIUM: {
     name: "Premium",
-    price: 599,
+    price: 499,
     days: 365,
     hasAI: true,
     features: [
@@ -274,8 +274,8 @@ export const REACTIVATION_PRICING = {
     days: 16,
   },
   PRO: {
-    originalPrice: 399,
-    discountedPrice: 200,
+    originalPrice: 299,
+    discountedPrice: 150,
     days: 32,
   },
 };
