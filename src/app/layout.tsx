@@ -4,8 +4,8 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 
 const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.className}>
       <body className="antialiased" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
