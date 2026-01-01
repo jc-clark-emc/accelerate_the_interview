@@ -226,10 +226,11 @@ export const PRICING_TIERS = {
   STARTER: {
     name: "Starter",
     price: 149,
-    days: 14,
+    days: 16,
     hasAI: false,
     features: [
       "14-day guided program",
+      "16 days to complete (buffer for life)",
       "Career profile dashboard",
       "Job tracker with match scores",
       "Networking contact tracker",
@@ -240,11 +241,11 @@ export const PRICING_TIERS = {
   PRO: {
     name: "Pro",
     price: 399,
-    days: 30,
+    days: 32,
     hasAI: true,
     features: [
       "Everything in Starter",
-      "30 days to complete",
+      "32 days to complete",
       "AI-powered resume bullet rewriting",
       "AI STAR story coaching",
       "AI networking message variations",
@@ -262,6 +263,20 @@ export const PRICING_TIERS = {
       "First 90 days guide",
       "Weekly wins tracker",
     ],
+  },
+};
+
+// Reactivation Pricing (50% off)
+export const REACTIVATION_PRICING = {
+  STARTER: {
+    originalPrice: 149,
+    discountedPrice: 75,
+    days: 16,
+  },
+  PRO: {
+    originalPrice: 399,
+    discountedPrice: 200,
+    days: 32,
   },
 };
 

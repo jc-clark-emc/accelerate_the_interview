@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2, Mail, Rocket } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,22 +38,22 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-12 px-4 shadow sm:rounded-lg sm:px-10 text-center">
-            <div className="mx-auto w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
-              <Mail className="w-8 h-8 text-primary-600" />
+          <div className="card py-12 px-4 sm:px-10 text-center">
+            <div className="mx-auto w-16 h-16 bg-[#00ffff]/20 rounded-full flex items-center justify-center mb-6">
+              <Mail className="w-8 h-8 text-[#00ffff]" />
             </div>
 
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-white mb-2">
               Check Your Email
             </h1>
 
-            <p className="text-gray-600 mb-6">
-              We sent a login link to <strong>{email}</strong>
+            <p className="text-white/70 mb-6">
+              We sent a login link to <strong className="text-white">{email}</strong>
             </p>
 
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-white/50 mb-6">
               Click the link in the email to sign in. The link expires in 15 minutes.
             </p>
 
@@ -64,7 +62,7 @@ export default function LoginPage() {
                 setSent(false);
                 setEmail("");
               }}
-              className="text-primary-600 hover:text-primary-500 font-medium text-sm"
+              className="text-[#00ffff] hover:text-[#ff1493] font-medium text-sm transition-colors"
             >
               Use a different email
             </button>
@@ -75,39 +73,40 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center">
-          <span className="text-2xl font-bold text-primary-600">
+        <Link href="/" className="flex justify-center items-center gap-2">
+          <Rocket className="w-8 h-8 text-[#00ffff]" />
+          <span className="text-2xl font-bold bg-gradient-to-r from-[#00ffff] to-[#ff1493] bg-clip-text text-transparent">
             Interview Accelerator
           </span>
         </Link>
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-bold text-white">
           Welcome back
         </h2>
-        <p className="mt-2 text-center text-gray-600">
+        <p className="mt-2 text-center text-white/60">
           Enter your email to receive a login link
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="card py-8 px-4 sm:px-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              <div className="bg-red-500/20 border border-red-500/50 text-red-400 p-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="label">
+              <label htmlFor="email" className="block text-sm font-medium text-white/80 mb-2">
                 Email Address
               </label>
               <input
                 id="email"
                 type="email"
                 required
-                className="input"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-[#00ffff] focus:ring-1 focus:ring-[#00ffff] transition-colors"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="john@example.com"
@@ -132,12 +131,12 @@ export default function LoginPage() {
             </div>
           </form>
 
-          <div className="mt-6 pt-6 border-t">
-            <p className="text-center text-sm text-gray-600">
-              Don't have an account?{" "}
+          <div className="mt-6 pt-6 border-t border-white/10">
+            <p className="text-center text-sm text-white/60">
+              Don&apos;t have an account?{" "}
               <Link
                 href="/activate"
-                className="text-primary-600 hover:text-primary-500 font-medium"
+                className="text-[#00ffff] hover:text-[#ff1493] font-medium transition-colors"
               >
                 Activate with code
               </Link>
