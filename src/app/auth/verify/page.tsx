@@ -1,19 +1,17 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 
-function VerifyContent() {
+export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
-  );
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -93,26 +91,5 @@ function VerifyContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function VerifyPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-md">
-            <div className="bg-white py-12 px-4 shadow sm:rounded-lg sm:px-10 text-center">
-              <Loader2 className="w-12 h-12 text-primary-600 animate-spin mx-auto mb-6" />
-              <h1 className="text-xl font-bold text-gray-900 mb-2">
-                Loading...
-              </h1>
-            </div>
-          </div>
-        </div>
-      }
-    >
-      <VerifyContent />
-    </Suspense>
   );
 }

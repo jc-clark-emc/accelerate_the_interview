@@ -2,13 +2,13 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function sendMagicLinkEmail(email: string, token: string) {
+export async function sendMagicLinkEmail(email: string, token: string, code?: string) {
   const magicLink = `${process.env.NEXTAUTH_URL}/auth/verify?token=${token}`;
 
   const { data, error } = await resend.emails.send({
-    from: process.env.EMAIL_FROM || 'Interview Accelerator <noreply@example.com>',
+    from: process.env.EMAIL_FROM || 'Interview Accelerator <noreply@engineermycareer.com>',
     to: email,
-    subject: 'Your Interview Accelerator Login Link',
+    subject: code ? `Your login code: ${code}` : 'Your Interview Accelerator Login Link',
     html: `
       <!DOCTYPE html>
       <html>
@@ -23,9 +23,20 @@ export async function sendMagicLinkEmail(email: string, token: string) {
               Interview Accelerator
             </h1>
             
+            ${code ? `
+            <div style="background-color: #f0f9ff; border-radius: 8px; padding: 24px; margin: 0 0 24px 0; text-align: center;">
+              <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">Your login code:</p>
+              <p style="color: #0284c7; font-size: 36px; font-weight: bold; letter-spacing: 8px; margin: 0;">${code}</p>
+            </div>
+            
+            <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              Enter this code on the login page, or click the button below. Expires in 15 minutes.
+            </p>
+            ` : `
             <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
               Click the button below to log in to your Interview Accelerator account. This link will expire in 15 minutes.
             </p>
+            `}
             
             <a href="${magicLink}" style="display: inline-block; background-color: #0284c7; color: white; font-weight: 600; font-size: 16px; padding: 14px 28px; border-radius: 8px; text-decoration: none;">
               Log In to Your Account

@@ -16,8 +16,44 @@ export const authOptions: NextAuthOptions = {
       name: "Magic Link",
       credentials: {
         token: { label: "Token", type: "text" },
+        email: { label: "Email", type: "email" },
+        code: { label: "Code", type: "text" },
       },
       async authorize(credentials) {
+        // Handle 6-digit code login
+        if (credentials?.email && credentials?.code) {
+          const user = await prisma.user.findFirst({
+            where: {
+              email: credentials.email.toLowerCase(),
+              loginCode: credentials.code,
+              magicLinkExpires: {
+                gt: new Date(),
+              },
+            },
+          });
+
+          if (!user) {
+            throw new Error("Invalid or expired code");
+          }
+
+          // Clear the login code and token (one-time use)
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              magicLinkToken: null,
+              magicLinkExpires: null,
+              loginCode: null,
+            },
+          });
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          };
+        }
+
+        // Handle magic link token login
         if (!credentials?.token) {
           throw new Error("Missing token");
         }
@@ -42,6 +78,7 @@ export const authOptions: NextAuthOptions = {
           data: {
             magicLinkToken: null,
             magicLinkExpires: null,
+            loginCode: null,
           },
         });
 

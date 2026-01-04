@@ -3,6 +3,11 @@ import { nanoid } from "nanoid";
 import prisma from "@/lib/prisma";
 import { sendMagicLinkEmail } from "@/lib/email";
 
+// Generate a 6-digit code
+function generateCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
@@ -28,20 +33,22 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Generate magic link token
+    // Generate magic link token and 6-digit code
     const magicLinkToken = nanoid(32);
+    const loginCode = generateCode();
     const magicLinkExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
     await prisma.user.update({
       where: { id: user.id },
       data: {
         magicLinkToken,
+        loginCode,
         magicLinkExpires,
       },
     });
 
-    // Send email
-    await sendMagicLinkEmail(email, magicLinkToken);
+    // Send email with both link and code
+    await sendMagicLinkEmail(email, magicLinkToken, loginCode);
 
     return NextResponse.json({
       success: true,

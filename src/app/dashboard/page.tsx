@@ -4,16 +4,7 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { DAYS } from "@/lib/constants";
-import {
-  Lock,
-  CheckCircle,
-  Circle,
-  ArrowRight,
-  Briefcase,
-  MessageSquare,
-  FileText,
-  Target,
-} from "lucide-react";
+import { Lock, CheckCircle, Circle, ArrowRight, Briefcase, MessageSquare, FileText, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ExpiredBanner } from "@/components/ExpiredBanner";
 
@@ -59,24 +50,17 @@ export default async function DashboardPage() {
   }
 
   // Check if subscription is expired
-  const isExpired =
-    user.subscription?.status === "READ_ONLY" ||
-    user.subscription?.status === "EXPIRED";
-  const isEligibleForReactivation =
-    isExpired &&
-    (user.subscription?.tier === "STARTER" ||
-      user.subscription?.tier === "PRO");
-  const daysCompleted = user.dayProgress.filter(
-    (dp) => dp.status === "COMPLETED"
-  ).length;
+  const isExpired = user.subscription?.status === "READ_ONLY" || user.subscription?.status === "EXPIRED";
+  const isEligibleForReactivation = isExpired && (user.subscription?.tier === "STARTER" || user.subscription?.tier === "PRO");
+  const daysCompleted = user.dayProgress.filter(dp => dp.status === "COMPLETED").length;
 
   return (
     <div className="space-y-8">
       {/* Expired Banner */}
       {isEligibleForReactivation && user.subscription && (
-        <ExpiredBanner
-          tier={user.subscription.tier as "STARTER" | "PRO"}
-          daysCompleted={daysCompleted}
+        <ExpiredBanner 
+          tier={user.subscription.tier as "STARTER" | "PRO"} 
+          daysCompleted={daysCompleted} 
         />
       )}
 
@@ -110,9 +94,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-sm text-white/50">Applications</p>
-              <p className="text-2xl font-bold text-white">
-                {stats.jobsApplied}
-              </p>
+              <p className="text-2xl font-bold text-white">{stats.jobsApplied}</p>
             </div>
           </div>
         </div>
@@ -123,9 +105,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-sm text-white/50">Messages Sent</p>
-              <p className="text-2xl font-bold text-white">
-                {stats.messagesSent}
-              </p>
+              <p className="text-2xl font-bold text-white">{stats.messagesSent}</p>
             </div>
           </div>
         </div>
@@ -136,9 +116,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-sm text-white/50">STAR Stories</p>
-              <p className="text-2xl font-bold text-white">
-                {stats.storiesComplete}/10
-              </p>
+              <p className="text-2xl font-bold text-white">{stats.storiesComplete}/10</p>
             </div>
           </div>
         </div>
@@ -186,10 +164,8 @@ export default async function DashboardPage() {
                 key={day.number}
                 className={cn(
                   "card transition-all",
-                  status === "completed" &&
-                    "border-[#10b981]/30 bg-[#10b981]/5",
-                  status === "in-progress" &&
-                    "border-[#f59e0b]/30 bg-[#f59e0b]/5",
+                  status === "completed" && "border-[#10b981]/30 bg-[#10b981]/5",
+                  status === "in-progress" && "border-[#f59e0b]/30 bg-[#f59e0b]/5",
                   status === "unlocked" && "border-[#00ffff]/30",
                   status === "locked" && "border-white/5 opacity-50",
                   isCurrentDay && "ring-2 ring-[#00ffff]"
@@ -211,13 +187,9 @@ export default async function DashboardPage() {
                     {/* Day Info */}
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-white">
-                          Day {day.number}
-                        </span>
+                        <span className="font-semibold text-white">Day {day.number}</span>
                         {isCurrentDay && (
-                          <span className="badge badge-cyan text-xs">
-                            Current
-                          </span>
+                          <span className="badge badge-cyan text-xs">Current</span>
                         )}
                       </div>
                       <p className="text-sm text-white/60">{day.title}</p>

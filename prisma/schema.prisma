@@ -24,6 +24,7 @@ model User {
   // Magic Link Auth
   magicLinkToken   String?   @unique
   magicLinkExpires DateTime?
+  loginCode        String?
 
   // Subscription
   subscription  Subscription?

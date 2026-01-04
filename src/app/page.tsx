@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PRICING_TIERS } from "@/lib/constants";
 import { Check, Rocket, ChevronDown, Star, TrendingUp, Users, Clock, Target, MessageSquare, FileText, Sparkles } from "lucide-react";
 import PricingSection from "@/components/PricingSection";
+import { LandingPagePopup } from "@/components/LandingPagePopup";
 
 export default function Home() {
   const painPoints = [
@@ -49,15 +50,15 @@ export default function Home() {
   const faqs = [
     {
       question: "How is this different from other job search advice?",
-      answer: "This isn't advice—it's a system. You get a daily checklist, templates you can copy-paste, and a dashboard that tracks everything. No guessing what to do next."
+      answer: "This isn't advice - it's a system. You get a daily checklist, templates you can copy-paste, and a dashboard that tracks everything. No guessing what to do next."
     },
     {
       question: "What if I can't commit 30 minutes every day?",
-      answer: "Life happens. The program is flexible—you can pause and pick up where you left off. Your access doesn't expire based on calendar days, but on active days you use."
+      answer: "Life happens. The program is flexible - you can pause and pick up where you left off. Your access doesn't expire based on calendar days, but on active days you use."
     },
     {
       question: "I'm not in tech. Will this work for me?",
-      answer: "Yes. The principles—targeted applications, strategic networking, compelling stories—work across industries. The templates are customizable to any field."
+      answer: "Yes. The principles - targeted applications, strategic networking, compelling stories - work across industries. The templates are customizable to any field."
     },
     {
       question: "What's the difference between the tiers?",
@@ -65,7 +66,7 @@ export default function Home() {
     },
     {
       question: "Can I get a refund?",
-      answer: "Due to the digital nature of the product, we don't offer refunds. But we're confident—if you do the work, you'll see results."
+      answer: "Due to the digital nature of the product, we don't offer refunds. But we're confident - if you do the work, you'll see results."
     },
   ];
 
@@ -165,7 +166,7 @@ export default function Home() {
               <p className="text-lg text-white/80">
                 <span className="text-[#00ffff] font-semibold">Finding a job is a whole job...</span>
                 <br />
-                <span className="text-white/60">And that&apos;s why we built Interview Accelerator—to do the heavy lifting for you.</span>
+                <span className="text-white/60">And that&apos;s why we built Interview Accelerator - to do the heavy lifting for you.</span>
               </p>
             </div>
           </div>
@@ -384,6 +385,9 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Coaching Popup */}
+      <LandingPagePopup />
     </div>
   );
 }

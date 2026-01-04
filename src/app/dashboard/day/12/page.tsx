@@ -13,6 +13,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import Link from "next/link";
+import { InterviewCoachingPopup } from "@/components/InterviewCoachingPopup";
 
 interface StarStory {
   questionNumber: number;
@@ -371,6 +372,9 @@ export default function Day12Page() {
           </button>
         )}
       </div>
+
+      {/* Coaching Popup - shows after 60 seconds on interview prep day */}
+      <InterviewCoachingPopup trigger="timer" delaySeconds={60} />
     </div>
   );
 }
