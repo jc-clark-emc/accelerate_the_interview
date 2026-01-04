@@ -68,7 +68,7 @@ export default function TermsPage() {
               All payments are processed through our authorized payment processor. Due to the digital nature of the product and immediate access granted upon purchase, <strong className="text-white">all sales are final and non-refundable</strong>.
             </p>
             <p className="text-white/70">
-              If you experience technical issues that prevent you from accessing the Service, please contact us at support@engineermycareer.com within 7 days of purchase.
+              If you experience technical issues that prevent you from accessing the Service, please contact us at jc@engineermycareer.com within 7 days of purchase.
             </p>
           </section>
 
@@ -118,8 +118,8 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-white mb-4">11. Contact</h2>
             <p className="text-white/70">
               For questions about these Terms of Service, contact us at:<br />
-              <a href="mailto:support@engineermycareer.com" className="text-[#00ffff] hover:text-[#ff1493] transition-colors">
-                support@engineermycareer.com
+              <a href="mailto:jc@engineermycareer.com" className="text-[#00ffff] hover:text-[#ff1493] transition-colors">
+                jc@engineermycareer.com
               </a>
             </p>
           </section>

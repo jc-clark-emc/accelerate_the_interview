@@ -158,7 +158,7 @@ function PurchaseSuccessContent() {
         <p className="text-center text-gray-500 text-sm mt-8">
           A confirmation email has been sent to {email}.
           <br />
-          If you have any issues, contact support@engineermycareer.com
+          If you have any issues, contact jc@engineermycareer.com
         </p>
       </div>
     </div>

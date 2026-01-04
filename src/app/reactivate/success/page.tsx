@@ -61,7 +61,7 @@ function ReactivateSuccessContent() {
         <div className="card max-w-md text-center">
           <p className="text-red-400 mb-4">{error}</p>
           <p className="text-white/60 mb-4">
-            If you completed payment, please contact support@engineermycareer.com
+            If you completed payment, please contact jc@engineermycareer.com
           </p>
           <Link href="/dashboard" className="text-[#00ffff] hover:text-[#ff1493]">
             ← Back to Dashboard

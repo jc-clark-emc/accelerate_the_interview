@@ -373,7 +373,7 @@ export default function Home() {
               <Link href="/privacy" className="text-white/50 hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <a href="mailto:support@engineermycareer.com" className="text-white/50 hover:text-white transition-colors">
+              <a href="mailto:jc@engineermycareer.com" className="text-white/50 hover:text-white transition-colors">
                 Contact
               </a>
             </div>

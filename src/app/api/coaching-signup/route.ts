@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
 
     // Send notification email to admin
     await resend.emails.send({
-      from: "Interview Accelerator <noreply@engineermycareer.com>",
-      to: process.env.ADMIN_EMAIL || "team@engineermycareer.com",
+      from: "Interview Accelerator <jc@engineermycareer.com>",
+      to: process.env.ADMIN_EMAIL || "jc@engineermycareer.com",
       subject: "New 1-on-1 Coaching Interest",
       html: `
         <h2>New Coaching Interest</h2>

@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     // Optional: Send welcome email
     if (process.env.SEND_WELCOME_EMAIL === "true") {
       await resend.emails.send({
-        from: process.env.EMAIL_FROM || "hello@engineermycareer.com",
+        from: process.env.EMAIL_FROM || "jc@engineermycareer.com",
         to: email,
         subject: "Welcome to Engineer My Career!",
         html: `

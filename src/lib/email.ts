@@ -6,7 +6,7 @@ export async function sendMagicLinkEmail(email: string, token: string, code?: st
   const magicLink = `${process.env.NEXTAUTH_URL}/auth/verify?token=${token}`;
 
   const { data, error } = await resend.emails.send({
-    from: process.env.EMAIL_FROM || 'Interview Accelerator <noreply@engineermycareer.com>',
+    from: process.env.EMAIL_FROM || 'Interview Accelerator <jc@engineermycareer.com>',
     to: email,
     subject: code ? `Your login code: ${code}` : 'Your Interview Accelerator Login Link',
     html: `
@@ -68,7 +68,7 @@ export async function sendMagicLinkEmail(email: string, token: string, code?: st
 
 export async function sendWelcomeEmail(email: string, name: string, tier: string) {
   const { data, error } = await resend.emails.send({
-    from: process.env.EMAIL_FROM || 'Interview Accelerator <noreply@example.com>',
+    from: process.env.EMAIL_FROM || 'Interview Accelerator <jc@engineermycareer.com>',
     to: email,
     subject: 'Welcome to Interview Accelerator! 🚀',
     html: `

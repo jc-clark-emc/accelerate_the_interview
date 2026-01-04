@@ -195,8 +195,8 @@ export default function ReactivatePage() {
         {/* Contact */}
         <p className="text-center text-white/40 text-sm mt-8">
           Questions? Email us at{" "}
-          <a href="mailto:support@engineermycareer.com" className="text-[#00ffff] hover:text-[#ff1493] transition-colors">
-            support@engineermycareer.com
+          <a href="mailto:jc@engineermycareer.com" className="text-[#00ffff] hover:text-[#ff1493] transition-colors">
+            jc@engineermycareer.com
           </a>
         </p>
       </div>

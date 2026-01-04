@@ -113,7 +113,7 @@ export default function PrivacyPage() {
               <li>Opt out of marketing communications</li>
             </ul>
             <p className="text-white/70 mt-4">
-              To exercise these rights, contact us at support@engineermycareer.com.
+              To exercise these rights, contact us at jc@engineermycareer.com.
             </p>
           </section>
 
@@ -142,8 +142,8 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-white mb-4">12. Contact Us</h2>
             <p className="text-white/70">
               For questions about this Privacy Policy, contact us at:<br />
-              <a href="mailto:support@engineermycareer.com" className="text-[#00ffff] hover:text-[#ff1493] transition-colors">
-                support@engineermycareer.com
+              <a href="mailto:jc@engineermycareer.com" className="text-[#00ffff] hover:text-[#ff1493] transition-colors">
+                jc@engineermycareer.com
               </a>
             </p>
           </section>
