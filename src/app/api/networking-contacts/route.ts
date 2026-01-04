@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
 
   const contact = await prisma.networkingContact.create({
     data: {
+      userId: session.user.id,
       jobLeadId: data.jobLeadId,
       name: data.name,
       role: data.role,
