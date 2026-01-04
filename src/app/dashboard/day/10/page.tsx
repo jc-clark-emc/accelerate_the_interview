@@ -40,11 +40,16 @@ export default function Day10Page() {
   const [saving, setSaving] = useState(false);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState<string | null>(null);
-  const [newContact, setNewContact] = useState({
+  const [newContact, setNewContact] = useState<{
+    name: string;
+    role: string;
+    linkedinUrl: string;
+    contactType: "HIRING_TEAM" | "COWORKER";
+  }>({
     name: "",
     role: "",
     linkedinUrl: "",
-    contactType: "HIRING_TEAM" as const,
+    contactType: "HIRING_TEAM",
   });
 
   const dayInfo = DAYS[9]; // Day 10
