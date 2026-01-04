@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkActiveSubscription } from "@/lib/utils";
 
 // GET - Fetch all networking contacts for user
 export async function GET(request: NextRequest) {
@@ -50,6 +51,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Check if subscription is active
+  const { isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
+  }
+
   const data = await request.json();
 
   // Verify job belongs to user
@@ -85,6 +95,15 @@ export async function PATCH(request: NextRequest) {
 
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if subscription is active
+  const { isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
   }
 
   const data = await request.json();
@@ -124,6 +143,15 @@ export async function DELETE(request: NextRequest) {
 
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if subscription is active
+  const { isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
   }
 
   const { searchParams } = new URL(request.url);

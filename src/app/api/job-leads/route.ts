@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { calculateMatchScore } from "@/lib/utils";
+import { calculateMatchScore, checkActiveSubscription } from "@/lib/utils";
 
 // GET - Fetch all job leads for user
 export async function GET() {
@@ -31,6 +31,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Check if subscription is active
+  const { isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
+  }
+
   const data = await request.json();
 
   // Fetch user's preferences and profile for match scoring
@@ -44,8 +53,8 @@ export async function POST(request: NextRequest) {
   ]);
 
   // Calculate match score if preferences exist
-  let matchScore = null;
-  let matchBreakdown = null;
+  let matchScore: number | null = null;
+  let matchBreakdown: Record<string, boolean> | undefined = undefined;
 
   if (preferences && profile) {
     const weights = (preferences.weights as Record<string, number>) || {
@@ -115,6 +124,15 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Check if subscription is active
+  const { isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
+  }
+
   const data = await request.json();
   const { id, ...updateData } = data;
 
@@ -146,6 +164,15 @@ export async function DELETE(request: NextRequest) {
 
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if subscription is active
+  const { isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
   }
 
   const { searchParams } = new URL(request.url);

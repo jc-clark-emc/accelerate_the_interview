@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { checkActiveSubscription } from "@/lib/utils";
 
 // GET - Fetch career profile
 export async function GET() {
@@ -24,6 +25,15 @@ export async function POST(request: NextRequest) {
 
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check if subscription is active
+  const { isActive, isExpired } = await checkActiveSubscription(session.user.id);
+  if (isExpired) {
+    return NextResponse.json(
+      { error: "Your subscription has expired. Please reactivate to continue editing." },
+      { status: 403 }
+    );
   }
 
   const data = await request.json();

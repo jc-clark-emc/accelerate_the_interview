@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import prisma from "./prisma";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -10,6 +11,41 @@ export function getDaysRemaining(endDate: Date): number {
   const now = new Date();
   const diff = endDate.getTime() - now.getTime();
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+// Check if user has active subscription (not expired)
+export async function checkActiveSubscription(userId: string): Promise<{
+  isActive: boolean;
+  isExpired: boolean;
+  tier: string | null;
+  daysRemaining: number;
+}> {
+  const subscription = await prisma.subscription.findFirst({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (!subscription) {
+    return { isActive: false, isExpired: true, tier: null, daysRemaining: 0 };
+  }
+
+  const daysRemaining = subscription.endDate ? getDaysRemaining(subscription.endDate) : 0;
+  const isExpired = daysRemaining <= 0;
+
+  // Update status if expired
+  if (isExpired && subscription.status === "ACTIVE") {
+    await prisma.subscription.update({
+      where: { id: subscription.id },
+      data: { status: "EXPIRED" },
+    });
+  }
+
+  return {
+    isActive: !isExpired && subscription.status === "ACTIVE",
+    isExpired,
+    tier: subscription.tier,
+    daysRemaining,
+  };
 }
 
 // Format date for display

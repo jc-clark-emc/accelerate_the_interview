@@ -2,9 +2,9 @@
 // These look complex but are the same for all users in each tier
 
 export const MASTER_CODES = {
-  STARTER: process.env.ACTIVATION_CODE_STARTER || 'IA-STR-7X9K2-M4NP8-QW3R5-2024',
-  PRO: process.env.ACTIVATION_CODE_PRO || 'IA-PRO-8H4J6-L2KM9-YT5V7-2024',
-  PREMIUM: process.env.ACTIVATION_CODE_PREMIUM || 'IA-PRM-3F7B9-N8XC4-ZQ6W2-2024',
+  STARTER: process.env.ACTIVATION_CODE_STARTER || 'IA-S7F2A-8B3C1-D9E4F-2A7B8-C3D1',
+  PRO: process.env.ACTIVATION_CODE_PRO || 'IA-P4E9B-7C2D5-F1A8E-3B6C9-D4F2',
+  PREMIUM: process.env.ACTIVATION_CODE_PREMIUM || 'IA-M2C8D-5F1A9-E7B3C-8D4F2-A6E1',
 };
 
 export type SubscriptionTier = 'STARTER' | 'PRO' | 'PREMIUM';
@@ -30,13 +30,13 @@ export function validateActivationCode(code: string): SubscriptionTier | null {
 export function getTierDays(tier: SubscriptionTier): number {
   switch (tier) {
     case 'STARTER':
-      return 14;
+      return 16;
     case 'PRO':
-      return 30;
+      return 32;
     case 'PREMIUM':
       return 365;
     default:
-      return 14;
+      return 16;
   }
 }
 

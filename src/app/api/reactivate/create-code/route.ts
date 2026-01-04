@@ -2,8 +2,21 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { REACTIVATION_PRICING, PRICING_TIERS } from "@/lib/constants";
-import crypto from "crypto";
+import { REACTIVATION_PRICING } from "@/lib/constants";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2023-10-16",
+});
+
+// Map tier to Stripe price ID (same products, coupon applies discount)
+const PRICE_IDS: Record<string, string> = {
+  STARTER: process.env.STRIPE_PRICE_STARTER!,
+  PRO: process.env.STRIPE_PRICE_PRO!,
+};
+
+// Reactivation coupon code (create this in Stripe dashboard: 50% off)
+const REACTIVATION_COUPON = process.env.STRIPE_REACTIVATION_COUPON || "COMEBACK50";
 
 export async function POST() {
   try {
@@ -33,68 +46,44 @@ export async function POST() {
     }
 
     const tier = subscription.tier as "STARTER" | "PRO";
-    const pricing = REACTIVATION_PRICING[tier];
+    const priceId = PRICE_IDS[tier];
 
-    // Generate a unique reactivation code
-    const reactivationCode = `REACT-${tier.charAt(0)}-${crypto.randomBytes(8).toString("hex").toUpperCase()}`;
+    if (!priceId) {
+      return NextResponse.json({ error: "Price not configured" }, { status: 500 });
+    }
 
-    // Store the reactivation code in database
-    // This code will be validated when they complete payment
-    await prisma.activationCode.create({
-      data: {
-        code: reactivationCode,
+    // Create Stripe Checkout with 50% coupon
+    const checkoutSession = await stripe.checkout.sessions.create({
+      customer_email: user.email,
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      discounts: [
+        {
+          coupon: REACTIVATION_COUPON,
+        },
+      ],
+      success_url: `${process.env.NEXTAUTH_URL}/reactivate/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/reactivate`,
+      metadata: {
+        type: "reactivation",
+        userId: user.id,
         tier,
-        isUsed: false,
-        // Store metadata about this being a reactivation
-        metadata: JSON.stringify({
-          type: "reactivation",
-          userId: user.id,
-          originalPrice: pricing.originalPrice,
-          discountedPrice: pricing.discountedPrice,
-        }),
       },
     });
 
-    // For now, we'll create a Stan Store URL with the product
-    // In production, you might want to use Stripe Checkout with a discount
-    const stanStoreUrl = `https://stan.store/_thecareerengineer`;
-    
-    // Alternative: If using Stripe, create a checkout session
-    // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-    // const checkoutSession = await stripe.checkout.sessions.create({
-    //   mode: 'payment',
-    //   line_items: [{
-    //     price_data: {
-    //       currency: 'usd',
-    //       product_data: {
-    //         name: `Interview Accelerator ${tier} - Reactivation`,
-    //       },
-    //       unit_amount: pricing.discountedPrice * 100,
-    //     },
-    //     quantity: 1,
-    //   }],
-    //   success_url: `${process.env.NEXTAUTH_URL}/reactivate/success?code=${reactivationCode}`,
-    //   cancel_url: `${process.env.NEXTAUTH_URL}/reactivate`,
-    //   metadata: {
-    //     reactivationCode,
-    //     userId: user.id,
-    //   },
-    // });
-    // return NextResponse.json({ checkoutUrl: checkoutSession.url });
-
-    // For Stan Store flow, send them to Stan Store
-    // They'll get a PDF with the reactivation code
-    // For manual reactivations, admin can use the code directly
-
     return NextResponse.json({
-      checkoutUrl: stanStoreUrl,
-      reactivationCode, // In production, don't expose this - it should be in the PDF they receive
-      message: "Contact support@engineermycareer.com with this code after payment for instant reactivation",
+      checkoutUrl: checkoutSession.url,
     });
-  } catch (error) {
-    console.error("Reactivation code creation error:", error);
+  } catch (error: any) {
+    console.error("Reactivation checkout error:", error);
     return NextResponse.json(
-      { error: "Failed to create reactivation code" },
+      { error: error.message || "Failed to create checkout session" },
       { status: 500 }
     );
   }
