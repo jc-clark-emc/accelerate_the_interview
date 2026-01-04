@@ -7,7 +7,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID || "";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,20 +17,6 @@ export async function POST(request: NextRequest) {
         { error: "Valid email is required" },
         { status: 400 }
       );
-    }
-
-    // Add to Resend audience
-    if (AUDIENCE_ID) {
-      try {
-        await resend.contacts.create({
-          email,
-          audienceId: AUDIENCE_ID,
-          unsubscribed: false,
-        });
-      } catch (e) {
-        // Continue even if this fails (might be duplicate)
-        console.log("Resend contact creation:", e);
-      }
     }
 
     // Create Stripe checkout session
