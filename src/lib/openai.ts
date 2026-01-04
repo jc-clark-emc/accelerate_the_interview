@@ -1,8 +1,15 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 // Improve a resume bullet using the XYZ formula
 export async function improveResumeBullet(
@@ -30,7 +37,7 @@ Rules:
 
 Return ONLY the improved bullet, nothing else.`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
     max_tokens: 200,
@@ -76,7 +83,7 @@ Format your response as JSON:
   "tips": ["tip1", "tip2", "tip3"]
 }`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
     max_tokens: 800,
@@ -132,7 +139,7 @@ Rules:
 Return the 3 variations as a JSON array:
 ["variation1", "variation2", "variation3"]`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
     max_tokens: 1000,
@@ -192,7 +199,7 @@ Format as JSON:
   "walkAwayGuidance": "..."
 }`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
     max_tokens: 1000,
@@ -258,7 +265,7 @@ Format as JSON:
   "relationshipsToBuild": ["..."]
 }`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
     max_tokens: 1200,
