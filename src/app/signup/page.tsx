@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PRICING_TIERS } from "@/lib/constants";
+import { Loader2 } from "lucide-react";
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedPlan = searchParams.get("plan") || "pro";
@@ -84,7 +85,8 @@ export default function SignupPage() {
         </h2>
         <p className="mt-2 text-center text-gray-600">
           You're signing up for the{" "}
-          <span className="font-semibold">{planInfo.name}</span> plan (${planInfo.price})
+          <span className="font-semibold">{planInfo.name}</span> plan ($
+          {planInfo.price})
         </p>
       </div>
 
@@ -171,7 +173,9 @@ export default function SignupPage() {
                 disabled={loading}
                 className="btn-primary w-full disabled:opacity-50"
               >
-                {loading ? "Creating account..." : `Continue to Payment ($${planInfo.price})`}
+                {loading
+                  ? "Creating account..."
+                  : `Continue to Payment ($${planInfo.price})`}
               </button>
             </div>
           </form>
@@ -190,7 +194,9 @@ export default function SignupPage() {
 
           {/* Plan selector */}
           <div className="mt-8 pt-6 border-t">
-            <p className="text-sm text-gray-500 mb-3">Choose a different plan:</p>
+            <p className="text-sm text-gray-500 mb-3">
+              Choose a different plan:
+            </p>
             <div className="flex gap-2">
               {Object.entries(PRICING_TIERS).map(([key, plan]) => (
                 <Link
@@ -212,5 +218,19 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
+        </div>
+      }
+    >
+      <SignupContent />
+    </Suspense>
   );
 }
