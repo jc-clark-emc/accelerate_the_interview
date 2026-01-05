@@ -298,6 +298,8 @@ export default function Home() {
 
       {/* Pricing */}
       <section id="pricing" className="py-16 border-t border-white/10">
+        {/* Hidden anchor for /interview link */}
+        <div id="interview" className="absolute -mt-20"></div>
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
             <div className="badge badge-cyan mb-4 inline-flex">

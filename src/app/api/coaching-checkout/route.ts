@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXTAUTH_URL}/coaching-success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `https://calendly.com/lynda-leveledupleadership/interview-prep`,
       cancel_url: `${process.env.NEXTAUTH_URL}`,
       metadata: {
         type: "coaching",
